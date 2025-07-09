@@ -84,8 +84,10 @@
   const previewArea = document.getElementById('previewArea');
 
   Object.keys(PROJECT_DATA).forEach(project => {
+    //console.log(project, String(project).charAt(0).toUpperCase() + String(project).slice(1))
     const li = document.createElement('li');
-    li.textContent = project;
+    li.textContent = String(project).charAt(0).toUpperCase() + String(project).slice(1);
+    //li.textContent = project;
     li.addEventListener('click', () => loadProject(project));
     projectList.appendChild(li);
   });
@@ -95,7 +97,6 @@
     document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
     event.target.classList.add('active');
 
-    
     previewArea.innerHTML = ''; // Clear old previews
 
     const sizes = PROJECT_DATA[project];
@@ -129,7 +130,7 @@
       previewArea.appendChild(container);
     });
   }
- 
+
   </script>
 </body>
 </html>
