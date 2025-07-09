@@ -95,6 +95,7 @@
     document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
     event.target.classList.add('active');
 
+    
     previewArea.innerHTML = ''; // Clear old previews
 
     const sizes = PROJECT_DATA[project];
@@ -128,7 +129,7 @@
       previewArea.appendChild(container);
     });
   }
-
+ 
   </script>
 </body>
 </html>
