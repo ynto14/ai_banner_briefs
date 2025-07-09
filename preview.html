@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Banner Preview</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      margin: 0;
+      font-family: "Roboto", sans-serif;
+      height: 100vh;
+    }
+
+    .preview-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      background-color: #f4f4f4;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #1a1a1a;
+      color: white;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      color: #90caf9;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      margin-bottom: 8px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 4px;
+    }
+
+    .sidebar li:hover,
+    .sidebar li.active {
+      background: #42a5f5;
+      color: white;
+    }
+
+    .container {
+      margin-bottom: 20px;
+    }
+
+    .dcpreview {
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #1a1a1a;
+    }
+
+    iframe {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-area" id="previewArea">
+    <p>Select a project from the right sidebar to preview banners.</p>
+  </div>
+
+  <div class="sidebar">
+    <h2>Projects</h2>
+    <ul id="projectList"></ul>
+  </div>
+  <script src="scripts/data.js"></script>
+  <script>
+    const projectList = document.getElementById('projectList');
+  const previewArea = document.getElementById('previewArea');
+
+  Object.keys(PROJECT_DATA).forEach(project => {
+    const li = document.createElement('li');
+    li.textContent = project;
+    li.addEventListener('click', () => loadProject(project));
+    projectList.appendChild(li);
+  });
+
+  function loadProject(project) {
+    // Remove 'active' class
+    document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+    event.target.classList.add('active');
+
+    previewArea.innerHTML = ''; // Clear old previews
+
+    const sizes = PROJECT_DATA[project];
+
+    sizes.forEach(size => {
+      const container = document.createElement('div');
+      container.className = 'container';
+
+      const label = document.createElement('div');
+      label.className = 'dcpreview';
+      label.textContent = size;
+
+      const [width, height] = size.split('x');
+
+      const iframeWrapper = document.createElement('div');
+      iframeWrapper.style = `width:${width}px; height:${height}px; position: relative;`;
+
+      const iframe = document.createElement('iframe');
+      iframe.src = `./projects/${project}/${size}/index.html`;
+      iframe.width = width;
+      iframe.height = height;
+      iframe.style.border = 'none';
+
+      iframe.onerror = function () {
+        container.remove(); // remove if not found
+      };
+
+      iframeWrapper.appendChild(iframe);
+      container.appendChild(label);
+      container.appendChild(iframeWrapper);
+      previewArea.appendChild(container);
+    });
+  }
+
+  </script>
+</body>
+</html>
