@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=300,height=250">
+    <!--- <script src="https://s0.2mdn.net/ads/studio/cached_libs/gsap_3.11.5_min.js"></script> --->
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            top: 0;
+            left: 0;
+            position: absolute;
+            background-size: cover;
+        }
+
+        .full{
+            top: 0;
+            left: 0;
+            position: absolute;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+        }
+        @keyframes preloader-animation-keyframes {
+        0% {
+            transform: rotateZ(0deg);
+            animation-timing-function: linear;
+        }
+        100% {
+            transform: rotateZ(360deg);
+            animation-timing-function: linear;
+        }
+        }
+        .preloader-icon {
+            animation: preloader-animation-keyframes 0.8s linear 0s infinite normal forwards;
+        }
+        .preloader {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            background: black;
+            right: 0px;
+        }
+        .preloader-icon {
+            width: 24px;
+            height: 24px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -12px 0px 0px -12px;
+        }
+    </style>
+    <script src="https://ynto14.github.io/ai_banner_briefs/scripts/z.js"></script>
+    <script>
+        const util={store:[],datesList:[],index:0,debug:!1,clear(){this.store.length=0},dates(input,q){let d=new URLSearchParams(location.search).get(q)
+        this.datesList=input;if(d){this.index=d}else{for(let i in this.datesList){if(new Date()>new Date(this.datesList[i]))this.index=i}}},set(div,file,date=null,size=null){const isArray=Array.isArray;let type=(date&&size)?"cta":(size&&(date==null||date==undefined))?"button":date?"date":"element";let files=isArray(file)?file:[file];let sizes=isArray(size)?size:[size];let dates=isArray(date)?date:(date!==null?[date]:[]);let multiInput=files.length>1&&sizes.length>1;if(multiInput&&(!isArray(date)||files.length!==dates.length||sizes.length!==dates.length)){this.store.push({div,file:files[0],date:dates[0]||null,size:sizes[0]||null,type,})
+        return}
+        const maxLen=Math.max(files.length,dates.length,sizes.length);for(let i=0;i<maxLen;i++){this.store.push({div,type,file:files[i]??files[files.length-1],date:dates[i]??null,size:sizes[i]??sizes[sizes.length-1]})}},get(type){return type?this.store.filter(i=>(i.type===type)&&(type==='button'||type==='element'||i.date===this.datesList[this.index])):this.store}}
+    </script>
+</head>
+<body>
+    <div id="ad">
+        <div class="full" id="bg"></div>  
+        <video class="full" id="bg-video" muted>
+            <source src="assets/bg.mp4" type="video/mp4">
+        </video>
+        <div class="full" id="cta">
+            <div class="full" id="cta_off"></div>
+            <div class="full" id="cta_txt_off"></div>
+        </div>
+    </div>
+    <div id="preloader">
+        <svg class="preloader-icon stroke" x="0px" y="0px" viewBox="0 0 24 24">
+            <g class="" stroke="white important">
+                <line class="line" x1="12" y1="0" x2="12" y2="6"></line>
+                <line class="line" x1="12" y1="18" x2="12" y2="24"></line>
+                <line class="line" x1="24" y1="12" x2="18" y2="12"></line>
+                <line class="line" x1="6" y1="12" x2="0" y2="12"></line>
+                <line class="line" x1="20.49" y1="3.51" x2="16.24" y2="7.76"></line>
+                <line class="line" x1="7.76" y1="16.24" x2="3.51" y2="20.49"></line>
+                <line class="line" x1="20.49" y1="20.49" x2="16.24" y2="16.24"></line>
+                <line class="line" x1="7.76" y1="7.76" x2="3.51" y2="3.51"></line>
+            </g>
+        </svg>
+    </div>
+    <script>
+        
+    </script>
+    <script>
+        var mainTL, ctaTL, rollTL;
+        var dates = "01 Jan 2025";
+        var banner = {
+            border: {
+                size: 1,
+                color: '#000'
+            }
+        }
+        var border = {
+            size: 1,
+            color: 'black',
+        }
+        var preloader = {color: '#fff'};
+        util.dates(dates, 'date');
+        util.set('#bg', 'assets/bg.jpg');
+        util.set('#cta_off', 'assets/cta_off.png', null, {w: 88, h: 26, left: 104, top: 235});
+        util.set('#cta_txt_off', 'assets/cta_txt_off.png', null, {w: 88, h: 26, left: 104, top: 235});
+
+        var videobg;
+        document.addEventListener("DOMContentLoaded", function(){
+            videobg = document.getElementById('bg-video')
+            z('#bg-video').on('play', function(){
+                z('#bg-video').opacity(1)
+            }).on('ended', function(){
+                z('#bg-video').to({opacity: 0, duration: 0.5})
+                z('#bg').opacity(1)
+                customMainAnimation()
+            })
+
+            z('#preloader').metaAutoSize().css('background', '#7d0e14')
+            z('.stroke').css({stroke: preloader.color})
+            z('#ad').metaAutoSize().overflow('hidden').div('border')
+            z('#border').css({
+                w: `calc(100% - ${2 * border.size}px)`, h: `calc(100% - ${2 * border.size}px)`, border: `${border.size}px solid ${border.color}`, zIndex: 5, pointerEvents: 'none'
+            })
+            handleAssetElement(util.get('element'), util.get('date'), util.get('cta'), util.get('button'))
+            z('#bg').opacity(0)
+            z('#cta').opacity(0)
+            setTimeout(function(){
+                z('#preloader').display('none')
+                videobg.play()
+                //customMainAnimation()
+            }, 1000)
+
+            
+        })
+        function customMainAnimation(tl){
+            z('#cta').to({opacity: 1, duration: 0.3, delay: 0.5})
+            
+            
+        }
+
+        function customRollAnimation(tl){}
+        function handleAssetElement(_element, _date, _cta, _button){
+            _element.forEach(i => z('#ad').div(i.div).css({backgroundImage: `url(${i.file})`}))
+            _date.forEach(i => z('#ad').div(i.div).css({backgroundImage: `url(${i.file})`}))
+            _button.forEach(i => z('#ad').div(i.div).metaAutoSize().css({backgroundImage: `url(${i.file})`}).tap(onClick, onRoll, onOut))
+            _cta.forEach(i => z('#ad').div(i.div).tap(onClick, onRoll, onOut).css({width: i.size.width, height: i.size.height, top: i.size.top, left: i.size.left, right: i.size.right, bottom: i.size.bottom, backgroundImage: `url(${i.file})`}))
+        }
+        function customCTAAnimation(tl, target){}
+        function customCTAAssets(div, file){}
+        function onClick(e){}
+        function onRoll(e){
+            z('#cta').to({brightness: 1.5, contrast: 1.2, duration: 0.3}).to({brightness: 1, contrast: 1, duration: 1.2}).to({brightness: 1.5, contrast: 1.2, duration: 0.3})
+            //z('#item').to({brightness: 1.1, duration: 0.5, ease: 'easeOutSine'}).to({brightness: 1, duration: 1, ease: 'easeOutSine'})
+            //z('#star1').to({brightness: 1.2, duration: 0.3}).to({brightness: 1, duration: 0.3})
+            //z('#star2').to({brightness: 1.2, delay: 0.3, duration: 0.3}).to({brightness: 1, duration: 0.3})
+            
+            //z('#cta_off').to({opacity: 0, duration: 0.5, ease: 'easeOutSine'})
+            //z('#cta_on').to({opacity: 1, duration: 0.5, ease: 'easeOutSine'})
+            //z('#item').to({brightness: 1.5, duration: 0.5, ease: 'easeOutSine'}).to({brightness: 1, duration: 1, ease: 'easeOutSine'})
+            //z('#tagline').to({scale: 1.2, duration: 0.3, ease: 'easeInSine'}).to({scale: 1, duration: 0.5, ease: 'easeOutSine'})
+        }
+        function onOut(e){
+
+            z('#cta').to({brightness: 1, contrast: 1, duration: 0})
+            //z('#cta_off').to({opacity: 1, duration: 0.5, ease: 'easeOutSine'})
+            //z('#cta_on').to({opacity: 0, duration: 0.5, ease: 'easeOutSine'})
+        }
+    </script>
+</body>
+</html>
